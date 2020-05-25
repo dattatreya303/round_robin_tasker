@@ -1,6 +1,6 @@
 import logging
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram.ext import Updater, CommandHandler, CallbackContext
 
 from TaskData import TaskData
 from ChatData import ChatData
@@ -67,12 +67,6 @@ def check_task(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Task: {} - {}\'s turn!!".format(task_name, next_name))
 
 
-def echo(update: Update, context: CallbackContext):
-    query = update.callback_query.data
-    print(query.data)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=query.data)
-
-
 def help(update: Update, context: CallbackContext):
     help_string = "Use /add_task with args: <taskName> <participants-csv>." \
                   "\nUse /check_task with args: <taskName>."
@@ -88,7 +82,6 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('add_task', add_task))
     updater.dispatcher.add_handler(CommandHandler('check_task', check_task))
     updater.dispatcher.add_handler(CommandHandler('help', help))
-    updater.dispatcher.add_handler(MessageHandler(Filters.text, echo))
 
     # Start the Bot
     updater.start_polling()
