@@ -1,24 +1,19 @@
 import logging
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram.ext import Updater, CommandHandler, CallbackContext, PicklePersistence
 
 from TaskData import TaskData
 from ChatData import ChatData
+from constants import NUM_TASKS_CREATED_DATA_KEY, FILENAME_PKL, TOKEN
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-TOKEN = "958111367:AAFbNEDl0V6KJxKLq64P0zHf2YwWefo4Mxc"
-
 updater = None
-
-chat_map = dict()
-num_tasks_created = 0
 
 
 def add_task(update: Update, context: CallbackContext):
-    global num_tasks_created
 
     chat_id = update.effective_chat.id
     print('chat id', chat_id)
@@ -33,13 +28,18 @@ def add_task(update: Update, context: CallbackContext):
 
     participant_list = context.args[1].split(',')
 
-    new_task = TaskData(num_tasks_created + 1, task_name, participant_list)
-    num_tasks_created += 1
+    if NUM_TASKS_CREATED_DATA_KEY not in context.bot_data:
+        context.bot_data[NUM_TASKS_CREATED_DATA_KEY] = 0
+    num_tasks_created = context.bot_data[NUM_TASKS_CREATED_DATA_KEY]
 
-    if chat_id not in chat_map:
-        new_chat = ChatData(chat_id)
-        chat_map[chat_id] = new_chat
-    chat_map[chat_id].add_task(new_task)
+    num_tasks_created += 1
+    context.bot_data[NUM_TASKS_CREATED_DATA_KEY] = num_tasks_created
+
+    new_task = TaskData(num_tasks_created, task_name, participant_list)
+
+    if chat_id not in context.chat_data:
+        context.chat_data[chat_id] = ChatData(chat_id)
+    context.chat_data[chat_id].add_task(new_task)
 
     context.bot.send_message(chat_id=update.effective_chat.id, text="Task: {} created!".format(task_name))
 
@@ -53,11 +53,11 @@ def check_task(update: Update, context: CallbackContext):
 
     chat_id = update.effective_chat.id
     print('chat id', chat_id)
-    if chat_id not in chat_map:
+    if chat_id not in context.chat_data:
         context.bot.send_message(chat_id=update.effective_chat.id, text="No tasks exist for this chat!")
         return
 
-    chat_data: ChatData = chat_map[chat_id]
+    chat_data: ChatData = context.chat_data[chat_id]
     task_data: TaskData = chat_data.get_task_by_name(task_name)
     if task_data is None:
         context.bot.send_message(chat_id=update.effective_chat.id, text="Task {} doesn't exist!".format(task_name))
@@ -65,12 +65,6 @@ def check_task(update: Update, context: CallbackContext):
 
     next_name = task_data.who()
     context.bot.send_message(chat_id=update.effective_chat.id, text="Task: {} - {}\'s turn!!".format(task_name, next_name))
-
-
-def echo(update: Update, context: CallbackContext):
-    query = update.callback_query.data
-    print(query.data)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=query.data)
 
 
 def help(update: Update, context: CallbackContext):
@@ -82,13 +76,20 @@ def help(update: Update, context: CallbackContext):
 def main():
     global updater
 
+    # Create persistence manager object
+    persistence_manager = PicklePersistence(filename=FILENAME_PKL,
+                                            store_user_data=False,
+                                            store_chat_data=True,
+                                            store_bot_data=True,
+                                            single_file=False,
+                                            on_flush=False)
+
     # Create the Updater and pass it your bot's token.
-    updater = Updater(TOKEN, use_context=True)
+    updater = Updater(TOKEN, persistence=persistence_manager, use_context=True)
 
     updater.dispatcher.add_handler(CommandHandler('add_task', add_task))
     updater.dispatcher.add_handler(CommandHandler('check_task', check_task))
     updater.dispatcher.add_handler(CommandHandler('help', help))
-    updater.dispatcher.add_handler(MessageHandler(Filters.text, echo))
 
     # Start the Bot
     updater.start_polling()
