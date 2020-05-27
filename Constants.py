@@ -1,6 +1,6 @@
 TOKEN = "958111367:AAFbNEDl0V6KJxKLq64P0zHf2YwWefo4Mxc"
 
-FILENAME_PKL = './data/chat_task_data.pkl'
+FILENAME_PKL = '~/round_robin_tasker_project/data/chat_task_data.pkl'
 
 MYSQL_USER = "dattatreya303"
 MYSQL_PWD = "roundrobin@2020"

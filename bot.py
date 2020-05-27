@@ -4,7 +4,7 @@ from telegram.ext import Updater, CommandHandler, CallbackContext, PicklePersist
 
 from TaskData import TaskData
 from ChatData import ChatData
-from constants import NUM_TASKS_CREATED_DATA_KEY, FILENAME_PKL, TOKEN
+from Constants import NUM_TASKS_CREATED_DATA_KEY, FILENAME_PKL, TOKEN
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
