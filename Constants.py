@@ -7,3 +7,5 @@ MYSQL_PWD = "roundrobin@2020"
 MYSQL_DB = "dattatreya303$round-robin-tasker-bot"
 
 NUM_TASKS_CREATED_DATA_KEY = 'bot_num_tasks_created'
+
+CANCEL_CONV_PROMPT = "Send /cancel to stop terminate this command."

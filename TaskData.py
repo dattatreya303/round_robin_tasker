@@ -22,17 +22,27 @@ class TaskData(object):
 
     def check_participant_exists_by_name(self, user_name: str):
         for participant in self.__participants:
-            if participant.user_name == user_name:
+            if participant.user_name.lower() == user_name.lower():
                 return True
         return False
 
-    def add_participant(self, participant: UserData):
-        self.__participants.add(participant)
+    def add_participant(self, participant: UserData) -> bool:
+        if not self.check_participant_exists_by_name(participant.user_name):
+            self.__participants.add(participant)
+            return True
+        return False
+
+    def add_participant(self, participant_list: list) -> bool:
+        for participant in participant_list:
+            if not self.add_participant(participant):
+                return False
 
     def remove_participant(self, participant: UserData):
         self.__participants.remove(participant)
 
     def who(self):
+        if len(self.__participants) == 0:
+            return None
         who = self.__tracker
         self.__tracker = (self.__tracker + 1) % len(self.__participants)
         return self.__participants[who]
