@@ -54,6 +54,6 @@ class TaskData(object):
             return None
         who = self.__tracker
         self.__tracker = (self.__tracker + 1) % len(self.__participants)
-        return self.__participants[who]
+        return self.__participants[who].user_name
 
 

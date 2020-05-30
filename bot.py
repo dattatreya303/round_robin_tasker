@@ -1,6 +1,7 @@
 import enum
 import logging
 import datetime
+import re
 from typing import List
 
 from telegram import Update
@@ -70,10 +71,10 @@ def add_task_conv_ask_name(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     logger.info('[add_task_conv_ask_name] chat id - {}'.format(chat_id))
 
-    task_name = update.message.text
+    task_name: str = re.sub('\s+', ' ', update.message.text.strip())
     logger.info('[add_task_conv_ask_name] task name - {}'.format(task_name))
 
-    if task_name.strip() == '':
+    if task_name == '':
         context.bot.send_message(chat_id=update.effective_chat.id, text="Enter a non empty task name.\n{}".format(CANCEL_CONV_PROMPT))
         return AddTaskConvState.ASK_NAME
 
@@ -97,7 +98,7 @@ def add_task_conv_ask_participants(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     logger.info('[add_task_conv_ask_participants] chat id - {}'.format(chat_id))
 
-    participant_list: List[str] = update.message.text.split(',')
+    participant_list: List[str] = list(map(lambda x: re.sub('\s+', ' ', x.strip()), update.message.text.strip().split(',')))
     logger.info('[add_task_conv_ask_participants] participant list - {}'.format(participant_list))
 
     if len(participant_list) == 0:
