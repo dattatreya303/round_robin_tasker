@@ -25,7 +25,7 @@ def add_task(update: Update, context: CallbackContext):
 
     logger.info('args -  {}'.format(context.args))
     if len(context.args) < 2 or (',' in context.args[0]):
-        help(update, context)
+        bot_help(update, context)
         return
 
     task_name = context.args[0].strip()
@@ -132,7 +132,7 @@ def add_task_conv_end(update: Update, context: CallbackContext):
 def check_task(update: Update, context: CallbackContext):
     logger.info('[bot][check_task] args - {}'.format(context.args))
     if len(context.args) < 1:
-        help(update, context)
+        bot_help(update, context)
         return
     task_name = context.args[0]
 
@@ -152,9 +152,12 @@ def check_task(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Task: {} - {}\'s turn!!".format(task_name, next_name))
 
 
-def help(update: Update, context: CallbackContext):
-    help_string = "Use /add_task with args: <taskName> <participants-csv>." \
-                  "\nUse /check_task with args: <taskName>."
+def bot_help(update: Update, context: CallbackContext):
+    help_string = "/add_task - Create a new task.\n" \
+                  "/check_task - Check updates on an existing task.\n" \
+                  "/cancel - Terminate an ongoing command.\n" \
+                  "/help - To know what each command does.\n\n" \
+                  "The bot will consider only explicit replies to continue the conversation."
     context.bot.send_message(chat_id=update.effective_chat.id, text=help_string)
 
 
@@ -186,7 +189,7 @@ def main():
         conversation_timeout=datetime.timedelta(minutes=1)
     ))
     updater.dispatcher.add_handler(CommandHandler('check_task', check_task))
-    updater.dispatcher.add_handler(CommandHandler('help', help))
+    updater.dispatcher.add_handler(CommandHandler('help', bot_help))
 
     # Start the Bot
     updater.start_polling()
