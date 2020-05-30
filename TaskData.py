@@ -35,6 +35,9 @@ class TaskData(object):
         return False
 
     def add_participant_list(self, participant_list: List[str]) -> bool:
+        participant_set = set(participant_list)
+        if len(participant_set) != len(participant_list):
+            return False
         to_add = []
         for participant in participant_list:
             if self.check_participant_exists_by_name(participant):
