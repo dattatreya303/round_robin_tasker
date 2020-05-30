@@ -1,3 +1,5 @@
+from typing import List
+
 from UserData import UserData
 
 
@@ -28,14 +30,18 @@ class TaskData(object):
 
     def add_participant(self, participant: UserData) -> bool:
         if not self.check_participant_exists_by_name(participant.user_name):
-            self.__participants.add(participant)
+            self.__participants.append(participant)
             return True
         return False
 
-    def add_participant(self, participant_list: list) -> bool:
+    def add_participant_list(self, participant_list: List[UserData]) -> bool:
+        to_add = []
         for participant in participant_list:
-            if not self.add_participant(participant):
+            if self.check_participant_exists_by_name(participant.user_name):
                 return False
+            to_add.append(participant)
+        self.__participants.extend(to_add)
+        return True
 
     def remove_participant(self, participant: UserData):
         self.__participants.remove(participant)
