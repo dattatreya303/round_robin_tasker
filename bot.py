@@ -19,36 +19,6 @@ class AddTaskConvState(enum.Enum):
     ASK_PARTICIPANTS = enum.auto(),
 
 
-def add_task(update: Update, context: CallbackContext):
-    chat_id = update.effective_chat.id
-    logger.info('[bot][add_task] chat id - {}'.format(chat_id))
-
-    logger.info('args -  {}'.format(context.args))
-    if len(context.args) < 2 or (',' in context.args[0]):
-        bot_help(update, context)
-        return
-
-    task_name = context.args[0].strip()
-    logger.info('[bot][add_task] task name - {}'.format(task_name))
-
-    participant_list = context.args[1].split(',')
-
-    if NUM_TASKS_CREATED_DATA_KEY not in context.bot_data:
-        context.bot_data[NUM_TASKS_CREATED_DATA_KEY] = 0
-    num_tasks_created = context.bot_data[NUM_TASKS_CREATED_DATA_KEY]
-
-    num_tasks_created += 1
-    context.bot_data[NUM_TASKS_CREATED_DATA_KEY] = num_tasks_created
-
-    new_task = TaskData(num_tasks_created, task_name, participant_list)
-
-    if chat_id not in context.chat_data:
-        context.chat_data[chat_id] = ChatData(chat_id)
-    context.chat_data[chat_id].add_task(new_task)
-
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Task: {} created!".format(task_name))
-
-
 def add_task_conv_start(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     logger.info('[bot][add_task_conv_start] chat id - {}'.format(chat_id))
