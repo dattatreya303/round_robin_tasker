@@ -1,4 +1,5 @@
 import enum
+import logging
 import datetime
 import re
 from typing import List
@@ -9,7 +10,11 @@ from telegram.ext import Updater, CommandHandler, CallbackContext, PicklePersist
 
 from TaskData import TaskData
 from ChatData import ChatData
-from Constants import NUM_TASKS_CREATED_DATA_KEY, FILENAME_PKL, TOKEN, CANCEL_CONV_PROMPT, TOKEN_TEST, logger
+from Constants import NUM_TASKS_CREATED_DATA_KEY, FILENAME_PKL, TOKEN, CANCEL_CONV_PROMPT, TOKEN_TEST
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 updater = None
 
@@ -17,11 +22,13 @@ updater = None
 class AddTaskConvState(enum.Enum):
     ASK_NAME = enum.auto(),
     ASK_PARTICIPANTS = enum.auto(),
+    END_CONV = -1,
+    TIMEOUT = -2
 
 
 def add_task(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
-    logger.info('[bot][add_task] chat id - {}'.format(chat_id))
+    logger.info('chat id - {}'.format(chat_id))
 
     logger.info('args -  {}'.format(context.args))
     if len(context.args) < 2 or (',' in context.args[0]):
@@ -29,7 +36,7 @@ def add_task(update: Update, context: CallbackContext):
         return
 
     task_name = context.args[0].strip()
-    logger.info('[bot][add_task] task name - {}'.format(task_name))
+    logger.info('task name - {}'.format(task_name))
 
     participant_list = context.args[1].split(',')
 
@@ -51,9 +58,9 @@ def add_task(update: Update, context: CallbackContext):
 
 def add_task_conv_start(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
-    logger.info('[bot][add_task_conv_start] chat id - {}'.format(chat_id))
+    logger.info('[add_task_conv_start] chat id - {}'.format(chat_id))
     uid = update.message.from_user
-    print('[bot][add_task_conv_start] from user - {}'.format(uid))
+    print('[add_task_conv_start] from user - {}'.format(uid))
     if chat_id not in context.chat_data:
         context.chat_data[chat_id] = ChatData(chat_id)
     context.bot.send_message(chat_id=update.effective_chat.id, text="Enter new task name.\n{}".format(CANCEL_CONV_PROMPT))
@@ -62,10 +69,10 @@ def add_task_conv_start(update: Update, context: CallbackContext):
 
 def add_task_conv_ask_name(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
-    logger.info('[bot][add_task_conv_ask_name] chat id - {}'.format(chat_id))
+    logger.info('[add_task_conv_ask_name] chat id - {}'.format(chat_id))
 
     task_name: str = re.sub('\s+', ' ', update.message.text.strip())
-    logger.info('[bot][add_task_conv_ask_name] task name - {}'.format(task_name))
+    logger.info('[add_task_conv_ask_name] task name - {}'.format(task_name))
 
     if task_name == '':
         context.bot.send_message(chat_id=update.effective_chat.id, text="Enter a non empty task name.\n{}".format(CANCEL_CONV_PROMPT))
@@ -89,10 +96,10 @@ def add_task_conv_ask_name(update: Update, context: CallbackContext):
 
 def add_task_conv_ask_participants(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
-    logger.info('[bot][add_task_conv_ask_participants] chat id - {}'.format(chat_id))
+    logger.info('[add_task_conv_ask_participants] chat id - {}'.format(chat_id))
 
     participant_list: List[str] = list(map(lambda x: re.sub('\s+', ' ', x.strip()), update.message.text.strip().split(',')))
-    logger.info('[bot][add_task_conv_ask_participants] participant list - {}'.format(participant_list))
+    logger.info('[add_task_conv_ask_participants] participant list - {}'.format(participant_list))
 
     if len(participant_list) == 0:
         context.bot.send_message(chat_id=update.effective_chat.id,
@@ -116,28 +123,27 @@ def add_task_conv_ask_participants(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text="Task: {} created!".format(transit_task.name))
 
-    return ConversationHandler.END
+    return AddTaskConvState.END_CONV
 
 
 def conv_timeout(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Conversation timed out.")
-    return ConversationHandler.END
+    return AddTaskConvState.END_CONV
 
 
-def add_task_conv_end(update: Update, context: CallbackContext):
+def conv_end(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Command terminated.")
-    return ConversationHandler.END
 
 
 def check_task(update: Update, context: CallbackContext):
-    logger.info('[bot][check_task] args - {}'.format(context.args))
+    logger.info('[check_task] args - {}'.format(context.args))
     if len(context.args) < 1:
         help(update, context)
         return
     task_name = context.args[0]
 
     chat_id = update.effective_chat.id
-    logger.info('[bot][check_task] chat id - {}'.format(chat_id))
+    logger.info('[check_task] chat id - {}'.format(chat_id))
     if chat_id not in context.chat_data:
         context.bot.send_message(chat_id=update.effective_chat.id, text="No tasks exist for this chat!")
         return
@@ -176,11 +182,11 @@ def main():
         name='add_task_conv',
         entry_points=[CommandHandler('add_task', add_task_conv_start)],
         states={
-            AddTaskConvState.ASK_NAME: [MessageHandler(filters=Filters.text & ~Filters.command, callback=add_task_conv_ask_name)],
-            AddTaskConvState.ASK_PARTICIPANTS: [MessageHandler(filters=Filters.text & ~Filters.command, callback=add_task_conv_ask_participants)],
-            ConversationHandler.TIMEOUT: [MessageHandler(filters=Filters.text, callback=conv_timeout)]
+            AddTaskConvState.ASK_NAME: [MessageHandler(filters=Filters.text, callback=add_task_conv_ask_name)],
+            AddTaskConvState.ASK_PARTICIPANTS: [MessageHandler(filters=Filters.text, callback=add_task_conv_ask_participants)],
+            AddTaskConvState.TIMEOUT: [CallbackQueryHandler(callback=conv_timeout)]
         },
-        fallbacks=[CommandHandler('cancel', add_task_conv_end)],
+        fallbacks=[CommandHandler('cancel', conv_end)],
         per_chat=True,
         per_user=False,
         conversation_timeout=datetime.timedelta(minutes=1)
