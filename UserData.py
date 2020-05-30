@@ -5,3 +5,8 @@ class UserData(object):
     @property
     def user_name(self):
         return self.__user_name
+
+    def __eq__(self, other):
+        if self.__user_name == other.username:
+            return True
+        return False
