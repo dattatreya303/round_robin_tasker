@@ -19,7 +19,7 @@ class ChatData(object):
     def transit_task(self):
         return self.__transit_task
 
-    def check_task_exists_by_id(self, task_id: int):
+    def check_task_exists_by_id(self, task_id: int) -> bool:
         for task_data in self.__task_list:
             if task_data.id == task_id:
                 return True
@@ -46,7 +46,7 @@ class ChatData(object):
             return 1
         return 0
 
-    def get_task_by_name(self, task_name) -> TaskData:
+    def get_task_by_name(self, task_name: str) -> TaskData:
         for task_data in self.__task_list:
             if task_name.lower() == task_data.name.lower():
                 return task_data

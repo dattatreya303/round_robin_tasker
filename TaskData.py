@@ -4,7 +4,7 @@ from UserData import UserData
 
 
 class TaskData(object):
-    def __init__(self, task_id, task_name=None, task_participants: list = []):
+    def __init__(self, task_id: int, task_name: str = None, task_participants: List[UserData] = []):
         self.__id = task_id
         self.__name = task_name
         self.__participants = task_participants
@@ -28,23 +28,26 @@ class TaskData(object):
                 return True
         return False
 
-    def add_participant(self, participant: UserData) -> bool:
-        if not self.check_participant_exists_by_name(participant.user_name):
-            self.__participants.append(participant)
+    def add_participant(self, participant: str) -> bool:
+        if not self.check_participant_exists_by_name(participant):
+            self.__participants.append(UserData(participant))
             return True
         return False
 
-    def add_participant_list(self, participant_list: List[UserData]) -> bool:
+    def add_participant_list(self, participant_list: List[str]) -> bool:
         to_add = []
         for participant in participant_list:
-            if self.check_participant_exists_by_name(participant.user_name):
+            if self.check_participant_exists_by_name(participant):
                 return False
-            to_add.append(participant)
+            to_add.append(UserData(participant))
         self.__participants.extend(to_add)
         return True
 
-    def remove_participant(self, participant: UserData):
-        self.__participants.remove(participant)
+    def remove_participant(self, participant: str) -> bool:
+        if self.check_participant_exists_by_name(participant):
+            self.__participants.remove(UserData(participant))
+            return True
+        return False
 
     def who(self):
         if len(self.__participants) == 0:

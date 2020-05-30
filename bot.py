@@ -1,6 +1,7 @@
 import enum
 import logging
 import datetime
+from typing import List
 
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext, PicklePersistence, ConversationHandler, \
@@ -96,7 +97,7 @@ def add_task_conv_ask_participants(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     logger.info('[add_task_conv_ask_participants] chat id - {}'.format(chat_id))
 
-    participant_list = update.message.text.split(',')
+    participant_list: List[str] = update.message.text.split(',')
     logger.info('[add_task_conv_ask_participants] participant list - {}'.format(participant_list))
 
     if len(participant_list) == 0:
@@ -106,7 +107,7 @@ def add_task_conv_ask_participants(update: Update, context: CallbackContext):
 
     transit_task: TaskData = context.chat_data[chat_id].transit_task
 
-    if not transit_task.add_participant(participant_list):
+    if not transit_task.add_participant_list(participant_list):
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="One of the names already exists in the participant list. Enter a valid list\n{}".format(CANCEL_CONV_PROMPT))
         return AddTaskConvState.ASK_PARTICIPANTS
