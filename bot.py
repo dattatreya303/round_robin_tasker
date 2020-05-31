@@ -16,7 +16,11 @@ updater = None
 
 class AddTaskConvState(enum.Enum):
     ASK_NAME = enum.auto(),
-    ASK_PARTICIPANTS = enum.auto(),
+    ASK_PARTICIPANTS = enum.auto()
+
+
+class CheckTaskConvState(enum.Enum):
+    ASK_NAME = enum.auto()
 
 
 def add_task_conv_start(update: Update, context: CallbackContext):
@@ -122,6 +126,44 @@ def check_task(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Task: {} - {}\'s turn!!".format(task_name, next_name))
 
 
+def check_task_conv_start(update: Update, context: CallbackContext):
+    chat_id = update.effective_chat.id
+    logger.info('[bot][check_task_conv_start] chat id - {}'.format(chat_id))
+    uid = update.message.from_user
+    print('[bot][add_task_conv_start] from user - {}'.format(uid))
+
+    if len(context.chat_data[chat_id].task_list) == 0:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="No tasks exist for this chat!")
+        return ConversationHandler.END
+
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Enter task name.\n{}".format(CANCEL_CONV_PROMPT))
+
+    return CheckTaskConvState.ASK_NAME
+
+
+def check_task_conv_ask_name(update: Update, context: CallbackContext):
+    chat_id = update.effective_chat.id
+    chat_data: ChatData = context.chat_data[chat_id]
+    task_name = update.message.text.strip()
+
+    if len(task_name) == 0:
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text="Please enter a non-empty task_name.\n{}".format(CANCEL_CONV_PROMPT))
+        return CheckTaskConvState.ASK_NAME
+
+    task_data: TaskData = chat_data.get_task_by_name(task_name=task_name)
+
+    if task_data is None:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Task {} doesn't exist!".format(task_name))
+        return ConversationHandler.END
+
+    next_name = task_data.who()
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text="Task: {} - {}\'s turn!!".format(task_name, next_name))
+
+    return ConversationHandler.END
+
+
 def bot_help(update: Update, context: CallbackContext):
     help_string = "/add_task - Create a new task.\n" \
                   "/check_task - Check updates on an existing task.\n" \
@@ -149,8 +191,10 @@ def main():
         name='add_task_conv',
         entry_points=[CommandHandler('add_task', add_task_conv_start)],
         states={
-            AddTaskConvState.ASK_NAME: [MessageHandler(filters=Filters.text & ~Filters.command, callback=add_task_conv_ask_name)],
-            AddTaskConvState.ASK_PARTICIPANTS: [MessageHandler(filters=Filters.text & ~Filters.command, callback=add_task_conv_ask_participants)],
+            AddTaskConvState.ASK_NAME: [
+                MessageHandler(filters=Filters.text & ~Filters.command, callback=add_task_conv_ask_name)],
+            AddTaskConvState.ASK_PARTICIPANTS: [
+                MessageHandler(filters=Filters.text & ~Filters.command, callback=add_task_conv_ask_participants)],
             ConversationHandler.TIMEOUT: [MessageHandler(filters=Filters.text, callback=conv_timeout)]
         },
         fallbacks=[CommandHandler('cancel', add_task_conv_end)],
@@ -158,7 +202,22 @@ def main():
         per_user=False,
         conversation_timeout=datetime.timedelta(minutes=1)
     ))
-    updater.dispatcher.add_handler(CommandHandler('check_task', check_task))
+
+    # updater.dispatcher.add_handler(CommandHandler('check_task', check_task))
+    updater.dispatcher.add_handler(ConversationHandler(
+        name='check_task_conv',
+        entry_points=[CommandHandler('check_task', check_task_conv_start)],
+        states={
+            CheckTaskConvState.ASK_NAME: [
+                MessageHandler(filters=Filters.text & ~Filters.command, callback=check_task_conv_ask_name)],
+            ConversationHandler.TIMEOUT: [MessageHandler(filters=Filters.text, callback=conv_timeout)]
+        },
+        fallbacks=[CommandHandler('cancel', add_task_conv_end)],
+        per_chat=True,
+        per_user=False,
+        conversation_timeout=datetime.timedelta(minutes=1)
+    ))
+
     updater.dispatcher.add_handler(CommandHandler('help', bot_help))
 
     # Start the Bot
