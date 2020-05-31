@@ -1,6 +1,6 @@
 from typing import List
 
-from UserData import UserData
+from entities.UserData import UserData
 
 
 class TaskData(object):

@@ -1,4 +1,4 @@
-from TaskData import TaskData
+from entities.TaskData import TaskData
 
 
 class ChatData(object):
