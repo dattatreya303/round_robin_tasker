@@ -2,7 +2,7 @@ from telegram.ext import ConversationHandler, CommandHandler, MessageHandler, Fi
 
 from conversations.callbacks.check_task import check_task_conv_start, check_task_conv_ask_name
 from conversations.common import TIMEOUT_DURATION
-from conversations.handlers.common import TIMEOUT_HANDLER
+from conversations.handlers.common import TIMEOUT_HANDLER, CANCEL_HANDLER, INVALID_COMMAND_HANDLER
 from conversations.states import CheckTaskConvState
 
 CHECK_TASK_START_HANDLER = CommandHandler('check_task', check_task_conv_start)
@@ -16,7 +16,7 @@ CHECK_TASK_CONVERSATION_HANDLER = ConversationHandler(
         CheckTaskConvState.ASK_NAME: [CHECK_TASK_ASK_NAME_HANDLER],
         ConversationHandler.TIMEOUT: [TIMEOUT_HANDLER]
     },
-    fallbacks=[],
+    fallbacks=[CANCEL_HANDLER, INVALID_COMMAND_HANDLER],
     per_chat=True,
     per_user=False,
     conversation_timeout=TIMEOUT_DURATION

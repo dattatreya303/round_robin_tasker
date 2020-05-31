@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import CallbackContext, ConversationHandler
 
 from Constants import logger, CANCEL_CONV_PROMPT
+from conversations.states import CheckTaskConvState
 from entities import ChatData, TaskData
 
 
@@ -23,6 +24,7 @@ def check_task_conv_start(update: Update, context: CallbackContext):
 def check_task_conv_ask_name(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     chat_data: ChatData = context.chat_data[chat_id]
+
     task_name = update.message.text.strip()
 
     if len(task_name) == 0:
