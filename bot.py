@@ -103,29 +103,6 @@ def add_task_conv_end(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
-def check_task(update: Update, context: CallbackContext):
-    logger.info('[bot][check_task] args - {}'.format(context.args))
-    if len(context.args) < 1:
-        bot_help(update, context)
-        return
-    task_name = context.args[0]
-
-    chat_id = update.effective_chat.id
-    logger.info('[bot][check_task] chat id - {}'.format(chat_id))
-    if chat_id not in context.chat_data:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="No tasks exist for this chat!")
-        return
-
-    chat_data: ChatData = context.chat_data[chat_id]
-    task_data: TaskData = chat_data.get_task_by_name(task_name)
-    if task_data is None:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Task {} doesn't exist!".format(task_name))
-        return
-
-    next_name = task_data.who()
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Task: {} - {}\'s turn!!".format(task_name, next_name))
-
-
 def check_task_conv_start(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     logger.info('[bot][check_task_conv_start] chat id - {}'.format(chat_id))
