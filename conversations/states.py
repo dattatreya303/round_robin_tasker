@@ -10,3 +10,5 @@ class CheckTaskConvState(enum.Enum):
     ASK_NAME = enum.auto()
 
 
+class DeleteTaskConvState(enum.Enum):
+    ASK_NAME = enum.auto()

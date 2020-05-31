@@ -51,3 +51,10 @@ class ChatData(object):
             if task_name.lower() == task_data.name.lower():
                 return task_data
         return None
+
+    def remove_task_by_name(self, task_name: str) -> bool:
+        for i, task_data in enumerate(self.__task_list):
+            if task_name.lower() == task_data.name.lower():
+                del self.__task_list[i]
+                return True
+        return False
