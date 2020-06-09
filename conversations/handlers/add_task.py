@@ -2,11 +2,12 @@ from telegram.ext import ConversationHandler, CommandHandler, MessageHandler, Fi
 
 from conversations.callbacks.add_task import add_task_conv_start, add_task_conv_ask_name, \
     add_task_conv_ask_participants
+from conversations.commands import MainCommands
 from conversations.common import TIMEOUT_DURATION
 from conversations.handlers.common import TIMEOUT_HANDLER, CANCEL_HANDLER, INVALID_COMMAND_HANDLER
 from conversations.states import AddTaskConvState
 
-ADD_TASK_START_HANDLER = CommandHandler('add_task', add_task_conv_start)
+ADD_TASK_START_HANDLER = CommandHandler(MainCommands.ADD_TASK.value, add_task_conv_start)
 
 ADD_TASK_ASK_NAME_HANDLER = MessageHandler(filters=Filters.text & ~Filters.command, callback=add_task_conv_ask_name)
 

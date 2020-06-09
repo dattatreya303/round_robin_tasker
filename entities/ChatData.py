@@ -1,3 +1,4 @@
+from conversations.commands import MainCommands
 from entities.TaskData import TaskData
 
 
@@ -5,7 +6,10 @@ class ChatData(object):
     def __init__(self, chat_id: int, task_list: list = []):
         self.__id = chat_id
         self.__task_list = task_list
-        self.__transit_task = None
+        # TODO: In-memory cache
+        self.__ongoing_conversation: MainCommands = None
+        # TODO: In-memory cache
+        self.__transit_task: TaskData = None
 
     @property
     def id(self):
@@ -18,6 +22,10 @@ class ChatData(object):
     @property
     def transit_task(self):
         return self.__transit_task
+
+    @property
+    def ongoing_conversation(self):
+        return self.__ongoing_conversation
 
     def check_task_exists_by_id(self, task_id: int) -> bool:
         for task_data in self.__task_list:
@@ -58,3 +66,6 @@ class ChatData(object):
                 del self.__task_list[i]
                 return True
         return False
+
+    def set_ongoing_conversation(self, ongoing_conversation_state: MainCommands):
+        self.__ongoing_conversation = ongoing_conversation_state

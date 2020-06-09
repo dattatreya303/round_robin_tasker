@@ -2,7 +2,7 @@ import enum
 
 
 class AddTaskConvState(enum.Enum):
-    ASK_NAME = enum.auto(),
+    ASK_NAME = enum.auto()
     ASK_PARTICIPANTS = enum.auto()
 
 
