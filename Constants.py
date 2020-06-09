@@ -1,7 +1,7 @@
 import logging
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 TOKEN = "958111367:AAFbNEDl0V6KJxKLq64P0zHf2YwWefo4Mxc"
