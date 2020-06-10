@@ -12,7 +12,7 @@ from conversations.handlers.start import START_CONVERSATION_HANDLER
 from entities.ChatData import ChatData
 
 switcher_v2: Dict[str, Handler] = {
-    MainCommands.START.value: START_CONVERSATION_HANDLER
+    MainCommands.START.value: START_CONVERSATION_HANDLER,
     MainCommands.ADD_TASK.value: ADD_TASK_CONVERSATION_HANDLER,
     MainCommands.CHECK_TASK.value: CHECK_TASK_CONVERSATION_HANDLER,
     MainCommands.LIST_TASKS.value: LIST_TASKS_CONVERSATION_HANDLER,
