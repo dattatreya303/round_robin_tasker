@@ -2,17 +2,11 @@ from telegram import Update
 from telegram.ext import CallbackContext, ConversationHandler
 
 from Constants import logger
+from conversations.common import HELP_MESSAGE
 
 
 def bot_help(update: Update, context: CallbackContext):
-    help_string = "/add_task - Create a new task.\n" \
-                  "/check_task - Check next turn for an existing task.\n" \
-                  "/list_tasks - List all active tasks in this chat.\n" \
-                  "/delete_task - Delete an existing task and all its data.\n" \
-                  "/cancel - Terminate an ongoing command.\n" \
-                  "/help - To know what each command does.\n\n" \
-                  "The bot will consider only explicit replies to continue the conversation."
-    context.bot.send_message(chat_id=update.effective_chat.id, text=help_string)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=HELP_MESSAGE)
 
 
 def conv_invalid_response(update: Update, context: CallbackContext):

@@ -8,9 +8,11 @@ from conversations.commands import MainCommands
 from conversations.handlers import ADD_TASK_CONVERSATION_HANDLER, CHECK_TASK_CONVERSATION_HANDLER, \
     LIST_TASKS_CONVERSATION_HANDLER, DELETE_TASK_CONVERSATION_HANDLER
 from conversations.handlers.common import ROOT_CANCEL_HANDLER, HELP_HANDLER, INVALID_COMMAND_HANDLER
+from conversations.handlers.start import START_CONVERSATION_HANDLER
 from entities.ChatData import ChatData
 
 switcher_v2: Dict[str, Handler] = {
+    MainCommands.START.value: START_CONVERSATION_HANDLER
     MainCommands.ADD_TASK.value: ADD_TASK_CONVERSATION_HANDLER,
     MainCommands.CHECK_TASK.value: CHECK_TASK_CONVERSATION_HANDLER,
     MainCommands.LIST_TASKS.value: LIST_TASKS_CONVERSATION_HANDLER,
