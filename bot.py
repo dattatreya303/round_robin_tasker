@@ -3,6 +3,7 @@ from telegram.ext import Updater, PicklePersistence
 from Constants import FILENAME_PKL, TOKEN_TEST
 from cleanup import run_cleanup_jobs
 from conversations.handlers.root_handler import ROUTER_HANDLER
+from status_updates.chat_migration import CHAT_MIGRATION_HANDLER
 
 updater = None
 
@@ -21,6 +22,10 @@ def main():
     # Create the Updater and pass it your bot's token.
     updater = Updater(TOKEN_TEST, persistence=persistence_manager, use_context=True)
 
+    # Add status update handler for chat migrations
+    updater.dispatcher.add_handler(CHAT_MIGRATION_HANDLER)
+
+    # Add root handler for routing task commands
     updater.dispatcher.add_handler(ROUTER_HANDLER)
 
     # Start the Bot
