@@ -21,16 +21,19 @@ class TestTaskDataMethods:
     def sample_user_d(self):
         return UserData('d')
 
-    @pytest.fixture
+    @pytest.fixture(scope='module')
     def sample_task_abc(self, sample_user_a, sample_user_b, sample_user_c):
         return TaskData(123, 'sample_task_abc', [sample_user_a, sample_user_b, sample_user_c])
 
-    @pytest.fixture(scope='module')
+    @pytest.fixture()
     def sample_task_empty(self):
         return TaskData(321, 'sample_task_empty', [])
 
-    def test_add_participant(self, sample_task_abc, sample_user_d):
-        pass
+    def test_add_participant(self, sample_task_empty, sample_user_d):
+        assert len(sample_task_empty.participants) == 0
+        sample_task_empty.add_participant(sample_user_d.user_name)
+        assert len(sample_task_empty.participants) == 1
+        assert sample_task_empty.participants[0].user_name == sample_user_d.user_name
 
     def test_check_participant_exists_by_name(self, sample_task_empty, sample_task_abc, sample_user_a, sample_user_b,
                                               sample_user_c, sample_user_d):
