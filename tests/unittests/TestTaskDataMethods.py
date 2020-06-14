@@ -29,6 +29,9 @@ class TestTaskDataMethods:
     def sample_task_empty(self):
         return TaskData(321, 'sample_task_empty', [])
 
+    def test_add_participant(self, sample_task_abc, sample_user_d):
+        pass
+
     def test_check_participant_exists_by_name(self, sample_task_empty, sample_task_abc, sample_user_a, sample_user_b,
                                               sample_user_c, sample_user_d):
         assert sample_task_empty.check_participant_exists_by_name(sample_user_a.user_name) is False
