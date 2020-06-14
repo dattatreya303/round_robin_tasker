@@ -34,6 +34,7 @@ class TestTaskDataMethods:
         sample_task_empty.add_participant(sample_user_d.user_name)
         assert len(sample_task_empty.participants) == 1
         assert sample_task_empty.participants[0].user_name == sample_user_d.user_name
+        pass
 
     def test_check_participant_exists_by_name(self, sample_task_empty, sample_task_abc, sample_user_a, sample_user_b,
                                               sample_user_c, sample_user_d):
