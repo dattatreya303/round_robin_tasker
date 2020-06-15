@@ -26,6 +26,10 @@ class TestTaskDataMethods:
         return TaskData(123, 'sample_task_abc', [sample_user_a, sample_user_b, sample_user_c])
 
     @pytest.fixture()
+    def sample_task_abc_editable(self, sample_user_a, sample_user_b, sample_user_c):
+        return TaskData(123, 'sample_task_abc', [sample_user_a, sample_user_b, sample_user_c])
+
+    @pytest.fixture()
     def sample_task_empty(self):
         return TaskData(321, 'sample_task_empty', [])
 
@@ -38,16 +42,16 @@ class TestTaskDataMethods:
         assert len(sample_task_empty.participants) == 2
         assert sample_task_empty.participants[1].user_name == sample_user_d.user_name
 
-    def test_remove_participant(self, sample_task_abc, sample_user_a, sample_user_b, sample_user_c):
-        sample_task_abc.remove_participant(sample_user_a.user_name)
-        assert any(map(lambda x: x.user_name == sample_user_a.user_name, sample_task_abc.participants)) is False
-        assert len(sample_task_abc.participants) == 2
-        sample_task_abc.remove_participant(sample_user_b.user_name)
-        assert any(map(lambda x: x.user_name == sample_user_a.user_name, sample_task_abc.participants)) is False
-        assert len(sample_task_abc.participants) == 1
-        sample_task_abc.remove_participant(sample_user_c.user_name)
-        assert any(map(lambda x: x.user_name == sample_user_a.user_name, sample_task_abc.participants)) is False
-        assert len(sample_task_abc.participants) == 0
+    def test_remove_participant(self, sample_task_abc_editable, sample_user_a, sample_user_b, sample_user_c):
+        sample_task_abc_editable.remove_participant(sample_user_a.user_name)
+        assert any(map(lambda x: x.user_name == sample_user_a.user_name, sample_task_abc_editable.participants)) is False
+        assert len(sample_task_abc_editable.participants) == 2
+        sample_task_abc_editable.remove_participant(sample_user_b.user_name)
+        assert any(map(lambda x: x.user_name == sample_user_a.user_name, sample_task_abc_editable.participants)) is False
+        assert len(sample_task_abc_editable.participants) == 1
+        sample_task_abc_editable.remove_participant(sample_user_c.user_name)
+        assert any(map(lambda x: x.user_name == sample_user_a.user_name, sample_task_abc_editable.participants)) is False
+        assert len(sample_task_abc_editable.participants) == 0
 
     def test_check_participant_exists_by_name(self, sample_task_empty, sample_task_abc, sample_user_a, sample_user_b,
                                               sample_user_c, sample_user_d):
