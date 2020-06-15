@@ -36,16 +36,16 @@ class TestTaskDataMethods:
         assert sample_task_empty.participants[0].user_name == sample_user_c.user_name
         sample_task_empty.add_participant(sample_user_d.user_name)
         assert len(sample_task_empty.participants) == 2
-        assert sample_task_empty.participants[0].user_name == sample_user_d.user_name
+        assert sample_task_empty.participants[1].user_name == sample_user_d.user_name
 
     def test_remove_participant(self, sample_task_abc, sample_user_a, sample_user_b, sample_user_c):
-        sample_task_abc.remove_participant(sample_user_a)
+        sample_task_abc.remove_participant(sample_user_a.user_name)
         assert any(map(lambda x: x.user_name == sample_user_a.user_name, sample_task_abc.participants)) is False
         assert len(sample_task_abc.participants) == 2
-        sample_task_abc.remove_participant(sample_user_b)
+        sample_task_abc.remove_participant(sample_user_b.user_name)
         assert any(map(lambda x: x.user_name == sample_user_a.user_name, sample_task_abc.participants)) is False
         assert len(sample_task_abc.participants) == 1
-        sample_task_abc.remove_participant(sample_user_c)
+        sample_task_abc.remove_participant(sample_user_c.user_name)
         assert any(map(lambda x: x.user_name == sample_user_a.user_name, sample_task_abc.participants)) is False
         assert len(sample_task_abc.participants) == 0
 
