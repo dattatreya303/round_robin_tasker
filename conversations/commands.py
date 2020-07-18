@@ -9,3 +9,4 @@ class MainCommands(enum.Enum):
     LIST_TASKS = 'list_tasks'
     HELP = 'help'
     CANCEL = 'cancel'
+    INVALID_COMMAND = 'invalid_command'
