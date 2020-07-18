@@ -12,7 +12,7 @@ def check_task_conv_start(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     logger.info('[bot][check_task_conv_start] chat id - {}'.format(chat_id))
     uid = update.message.from_user
-    logger.info('[bot][add_task_conv_start] from user - {}'.format(uid))
+    logger.info('[bot][check_task_conv_start] from user - {}'.format(uid))
     if chat_id not in context.chat_data or len(context.chat_data[chat_id].task_list) == 0:
         context.bot.send_message(chat_id=update.effective_chat.id, text="No tasks exist for this chat!")
         return ConversationHandler.END
