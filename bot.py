@@ -1,9 +1,8 @@
 from telegram.ext import Updater, PicklePersistence
 
-from Constants import FILENAME_PKL, TOKEN_TEST
 from cleanup import run_cleanup_jobs
 from conversations.handlers.root_handler import ROUTER_HANDLER
-from startup import set_env_vars_map, get_token, get_persistence_filename_prefix
+from vault import set_env_vars_map, get_token, get_persistence_filename_prefix
 from status_updates.chat_migration import CHAT_MIGRATION_HANDLER
 
 updater = None
