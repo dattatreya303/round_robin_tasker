@@ -1,8 +1,8 @@
 from telegram.ext import Updater, PicklePersistence
 
-from Constants import FILENAME_PKL, TOKEN_TEST
 from cleanup import run_cleanup_jobs
 from conversations.handlers.root_handler import ROUTER_HANDLER
+from vault import set_env_vars_map, get_token, get_persistence_filename_prefix
 from status_updates.chat_migration import CHAT_MIGRATION_HANDLER
 
 updater = None
@@ -11,8 +11,11 @@ updater = None
 def main():
     global updater
 
+    # Read all prod/test environment-specific runtime variables into a global map
+    set_env_vars_map()
+
     # Create persistence manager object
-    persistence_manager = PicklePersistence(filename=FILENAME_PKL,
+    persistence_manager = PicklePersistence(filename=get_persistence_filename_prefix(),
                                             store_user_data=False,
                                             store_chat_data=True,
                                             store_bot_data=True,
@@ -20,7 +23,7 @@ def main():
                                             on_flush=False)
 
     # Create the Updater and pass it your bot's token.
-    updater = Updater(TOKEN_TEST, persistence=persistence_manager, use_context=True)
+    updater = Updater(get_token(), persistence=persistence_manager, use_context=True)
 
     # Add status update handler for chat migrations
     updater.dispatcher.add_handler(CHAT_MIGRATION_HANDLER)
