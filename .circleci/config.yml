@@ -14,7 +14,7 @@ jobs:
           name: Create venv and install dependencies
           command: |
             pip install virtualenv
-            pip install -r $CIRCLE_PROJECT_REPONAME/requirements.txt 
+            pip install -r requirements.txt 
       - run:
           name: Run tests and generate reports
           command: pytest --junitxml pytests.xml --cov=entities.TaskData --cov-report xml:coverage.xml -q tests/unittests/TestTaskDataMethods.py
