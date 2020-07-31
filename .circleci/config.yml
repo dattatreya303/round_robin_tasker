@@ -1,0 +1,27 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.2.1
+
+jobs:
+  run-unit-tests:
+    working_directory: ~/circleci-rrt-tasker-project
+    executor:
+      docker:
+        - image: circleci/python:3.7.2
+    steps:
+      - checkout
+      - run:
+          name: Create venv and install dependencies
+          command: |
+            pip install virtualenv
+            pip install -r $CIRCLE_PROJECT_REPONAME/requirements.txt 
+      - run:
+          name: Run tests and generate reports
+          working_directory: $CIRCLE_PROJECT_REPONAME/
+          command: pytest --junitxml pytests.xml --cov=entities.TaskData --cov-report xml:coverage.xml -q tests/unittests/TestTaskDataMethods.py
+
+workflows:
+  main:
+    jobs:
+      - run-unit-tests
