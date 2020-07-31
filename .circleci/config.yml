@@ -6,9 +6,8 @@ version: 2.1
 jobs:
   run-unit-tests:
     working_directory: ~/circleci-rrt-tasker-project
-    executor:
-      docker:
-        - image: circleci/python:3.7.2
+    docker:
+      - image: circleci/python:3.7.2
     steps:
       - checkout
       - run:
