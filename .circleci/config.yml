@@ -17,7 +17,6 @@ jobs:
             pip install -r $CIRCLE_PROJECT_REPONAME/requirements.txt 
       - run:
           name: Run tests and generate reports
-          working_directory: $CIRCLE_PROJECT_REPONAME/
           command: pytest --junitxml pytests.xml --cov=entities.TaskData --cov-report xml:coverage.xml -q tests/unittests/TestTaskDataMethods.py
 
 workflows:
