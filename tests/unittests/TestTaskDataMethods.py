@@ -65,4 +65,4 @@ class TestTaskDataMethods:
         assert sample_task_empty.who() is None
         assert sample_task_abc.who() == sample_user_a.user_name
         assert sample_task_abc.who() == sample_user_b.user_name
-        assert sample_task_abc.who() == sample_user_c.user_name
+        assert sample_task_abc.who() == sample_user_a.user_name
