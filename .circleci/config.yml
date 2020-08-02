@@ -17,6 +17,8 @@ jobs:
             . venv/bin/activate
             pip install -r requirements.txt
             pytest --junitxml pytests.xml --cov=entities.TaskData --cov-report xml:coverage.xml -q tests/unittests/TestTaskDataMethods.py
+      - store_test_results:
+          path: pytests.xml
 workflows:
   main:
     jobs:
