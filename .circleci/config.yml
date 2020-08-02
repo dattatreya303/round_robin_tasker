@@ -17,7 +17,7 @@ jobs:
           name: Run tests and generate reports
           command: |
             . venv/bin/activate
-            pytest --junitxml test-results/pytests.xml --cov=entities.TaskData --cov-report html -q tests/unittests/TestTaskDataMethods.py
+            pytest --junitxml test-results/pytests.xml --cov=. --cov-report html
       - store_test_results:
           path: test-results
       - store_artifacts:
