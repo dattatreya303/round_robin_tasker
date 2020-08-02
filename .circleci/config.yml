@@ -1,8 +1,5 @@
 version: 2.1
 
-# orbs:
-#   python: circleci/python@0.2.1
-
 jobs:
   run-unit-tests:
     working_directory: ~/circleci-rrt-tasker-project
@@ -20,11 +17,13 @@ jobs:
           name: Run tests and generate reports
           command: |
             . venv/bin/activate
-            pytest --junitxml test-results/pytests.xml --cov=entities.TaskData --cov-report xml:coverage.xml -q tests/unittests/TestTaskDataMethods.py
+            pytest --junitxml test-results/pytests.xml --cov=entities.TaskData --cov-report html -q tests/unittests/TestTaskDataMethods.py
       - store_test_results:
           path: test-results
       - store_artifacts:
           path: test-results
+      - store_artifacts:
+          path: htmlcov
 workflows:
   main:
     jobs:
