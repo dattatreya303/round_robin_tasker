@@ -11,14 +11,19 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Create venv, install dependencies, run tests and generate reports
+          name: Create venv and install dependencies
           command: |
             virtualenv venv
             . venv/bin/activate
             pip install -r requirements.txt
-            pytest --junitxml pytests.xml --cov=entities.TaskData --cov-report xml:coverage.xml -q tests/unittests/TestTaskDataMethods.py
+      - run:
+          name: Run tests and generate reports
+          command: |
+            pytest --junitxml test-results/pytests.xml --cov=entities.TaskData --cov-report xml:coverage.xml -q tests/unittests/TestTaskDataMethods.py
       - store_test_results:
-          path: pytests.xml
+          path: test-results
+      - store_artifacts:
+          path: test-results
 workflows:
   main:
     jobs:
