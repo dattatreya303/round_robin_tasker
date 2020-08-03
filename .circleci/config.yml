@@ -20,7 +20,7 @@ jobs:
           name: Run tests and generate reports
           command: |
             . venv/bin/activate
-            pytest --junitxml test-results/pytests.xml --cov=. --cov-report html
+            pytest --junitxml test-results/pytests.xml --cov=. --cov-report xml
       - store_test_results:
           path: test-results
       - codecov/upload:

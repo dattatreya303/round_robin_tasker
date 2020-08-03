@@ -20,9 +20,9 @@ The bot will consider only explicit replies to continue the conversation.
 - Install requirements: `pip install -r requirements.txt`
 
 ### Generate test reports for changes
-- Run tests: `pytest --junitxml test-results/pytests.xml --cov=. --cov-report html`
+- Run tests: `pytest --junitxml test-results/pytests.xml --cov=. --cov-report xml`
 - Test summary: `test-results/pytests.xml`
-- Coverage report: `htmlcov/index.html`
+- Coverage report: `coverage.xml`
 
 ### Starting the server
 - Create a test bot using [BotFather](https://t.me/BotFather) on Telegram.
