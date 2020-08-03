@@ -1,4 +1,6 @@
-[![dattatreya303](https://circleci.com/gh/dattatreya303/round_robin_tasker.svg?style=svg)](https://circleci.com/gh/dattatreya303/round_robin_tasker)
+[![dattatreya303](https://circleci.com/gh/dattatreya303/round_robin_tasker.svg?style=shield)](https://circleci.com/gh/dattatreya303/round_robin_tasker)
+[![codecov](https://codecov.io/gh/dattatreya303/round_robin_tasker/branch/master/graph/badge.svg)](https://codecov.io/gh/dattatreya303/round_robin_tasker)
+
 # round_robin_tasker
 A telegram bot for groups to assign a task to members in a round robin manner.
 
@@ -20,9 +22,9 @@ The bot will consider only explicit replies to continue the conversation.
 - Install requirements: `pip install -r requirements.txt`
 
 ### Generate test reports for changes
-- Run tests: `pytest --junitxml test-results/pytests.xml --cov=. --cov-report html`
+- Run tests: `pytest --junitxml test-results/pytests.xml --cov=. --cov-report xml`
 - Test summary: `test-results/pytests.xml`
-- Coverage report: `htmlcov/index.html`
+- Coverage report: `coverage.xml`
 
 ### Starting the server
 - Create a test bot using [BotFather](https://t.me/BotFather) on Telegram.
