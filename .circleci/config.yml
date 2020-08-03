@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  codecov: codecov/codecov@1.0.2
+
 jobs:
   run-unit-tests:
     working_directory: ~/circleci-rrt-tasker-project
@@ -20,10 +23,8 @@ jobs:
             pytest --junitxml test-results/pytests.xml --cov=. --cov-report html
       - store_test_results:
           path: test-results
-      - store_artifacts:
-          path: test-results
-      - store_artifacts:
-          path: htmlcov
+      - codecov/upload:
+          file: htmlcov
 workflows:
   main:
     jobs:
