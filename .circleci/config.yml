@@ -24,7 +24,7 @@ jobs:
       - store_test_results:
           path: test-results
       - codecov/upload:
-          file: htmlcov
+          file: coverage.xml
 workflows:
   main:
     jobs:
